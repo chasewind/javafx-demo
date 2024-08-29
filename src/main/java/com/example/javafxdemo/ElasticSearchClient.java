@@ -3,6 +3,7 @@ package com.example.javafxdemo;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.ToNumberPolicy;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -284,7 +285,6 @@ public class ElasticSearchClient extends Application {
         TableColumn<IndexInfo, Void> actionColumn = buildActionColumn(stackPane, vbox, indexComboBox);
         tableView.getColumns().clear();
         tableView.getColumns().addAll(indexNameColumn, aliasNameColumn, actionColumn);
-        System.out.println("After adding: " + tableView.getColumns().size());
         connBtn.setOnMouseClicked(mouseEvent -> {
             boolean loginFlag = false;
             //判断是否已存在
@@ -358,7 +358,8 @@ public class ElasticSearchClient extends Application {
                     requestJson);
             String unformattedJson = dslResponse.getData();
 
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            Gson gson = new GsonBuilder().setNumberToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE)
+                    .setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE).setPrettyPrinting().create();
             Object json = gson.fromJson(unformattedJson, Object.class);
             String prettyJson = gson.toJson(json);
             resultDsl.clear();
