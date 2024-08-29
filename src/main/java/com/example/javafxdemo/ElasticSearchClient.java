@@ -257,6 +257,7 @@ public class ElasticSearchClient extends Application {
         dslBox.setSpacing(10);
         dslBox.setPrefHeight(480);
         vbox.getChildren().addAll(querybox, dslBox);
+        VBox.setVgrow(dslBox,Priority.ALWAYS);
 
 
         //历史查询语句传递
