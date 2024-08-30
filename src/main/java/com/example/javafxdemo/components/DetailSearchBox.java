@@ -122,6 +122,7 @@ public class DetailSearchBox extends VBox implements SelfDefineComponent{
             List<IndexInfo> indexInfoList = searchContext.getIndexInfoList();
             List<String> indexNameList = indexInfoList.stream().map(IndexInfo::getIndexName).collect(Collectors.toList());
             indexComboBox.setItems(FXCollections.observableArrayList(indexNameList));
+            indexComboBox.getSelectionModel().selectFirst();
         });
         DefaultEventBus.getInstance().registerConsumer(EventType.QUERY_WITH_SPECIAL_INDEX,event -> {
             IndexInfo indexInfo= (IndexInfo) event.getEventData();
