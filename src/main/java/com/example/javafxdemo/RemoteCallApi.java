@@ -20,7 +20,12 @@ public class RemoteCallApi {
         if(!basicUrl.endsWith("/")){
             basicUrl = basicUrl+"/";
         }
-        builder.uri(URI.create(basicUrl+indexName+"/"+action));
+        if(StringUtils.isNotEmpty(action) ){
+            builder.uri(URI.create(basicUrl+indexName+"/"+action));
+        }else{
+            builder.uri(URI.create(basicUrl+indexName));
+        }
+
         if(StringUtils.isNotEmpty(authHead)){
             builder.header("Authorization", authHead);
         }
@@ -95,5 +100,6 @@ public class RemoteCallApi {
         return responseResult;
 
     }
+
 
 }

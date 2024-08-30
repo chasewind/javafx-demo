@@ -41,5 +41,6 @@ module com.example.javafxdemo {
 
     //要支持序列化
     opens com.example.javafxdemo to javafx.fxml, com.google.gson;
+    opens com.example.javafxdemo.event to com.google.common;
     exports com.example.javafxdemo;
 }
