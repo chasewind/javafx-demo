@@ -7,11 +7,14 @@ import com.example.javafxdemo.components.SearchTableView;
 import com.example.javafxdemo.event.DefaultEventBus;
 import com.example.javafxdemo.event.EventSubscriber;
 import com.example.javafxdemo.event.EventType;
+import com.example.javafxdemo.util.GlobalApplicationLifecycleUtil;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
@@ -38,9 +41,13 @@ public class ElasticSearchClient extends Application {
         stackPane.setPadding(new Insets(10));
         SearchHeader searchHeader = new SearchHeader(primaryStage);
         root.setTop(searchHeader);
+        //
+        Label messageLabel = new Label("提示");
+        MessageEmitter messageEmitter = new MessageEmitter(messageLabel);
+        root.setBottom(messageLabel);
         //默认第一个展示
         SearchTableView searchTableView = new SearchTableView(stackPane);
-        DetailSearchBox detailSearchBox = new DetailSearchBox(stackPane,primaryStage);
+        DetailSearchBox detailSearchBox = new DetailSearchBox(stackPane,messageEmitter,primaryStage);
         DefaultEventBus.getInstance().registerConsumer(EventType.QUERY_WITH_SPECIAL_INDEX, event -> {
             stackPane.getChildren().clear();
             stackPane.getChildren().add(detailSearchBox);
@@ -58,11 +65,21 @@ public class ElasticSearchClient extends Application {
         });
         stackPane.getChildren().addAll(searchTableView);
         root.setCenter(stackPane);
+
+
+
         Scene scene = new Scene(root);
+        scene.getStylesheets().add(ElasticSearchClient.class.getResource("css/json-assist.css").toExternalForm());
+        scene.getStylesheets().add(ElasticSearchClient.class.getResource("css/common.css").toExternalForm());
         primaryStage.setScene(scene);
         primaryStage.setTitle("ELASTICSEARCH查询客户端");
         primaryStage.setWidth(1200);
         primaryStage.setHeight(600);
         primaryStage.show();
+        primaryStage.setOnCloseRequest(e -> {
+            GlobalApplicationLifecycleUtil.stop();
+            Platform.exit();
+            System.exit(0);
+        });
     }
 }

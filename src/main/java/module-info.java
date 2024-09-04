@@ -13,6 +13,9 @@ module com.example.javafxdemo {
     requires lombok;
     requires com.google.common;
     requires java.logging;
+    requires org.fxmisc.richtext;
+    requires reactfx;
+    requires org.fxmisc.flowless;
 
 
     exports org.controlsfx.control;

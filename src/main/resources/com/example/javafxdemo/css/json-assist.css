@@ -1,0 +1,52 @@
+.boolean {
+    -fx-font-weight: bold;
+    -fx-fill: blue;
+}
+.splitter {
+    -fx-font-weight: bold;
+    -fx-fill: black;
+}
+.bracket {
+    -fx-font-weight: bold;
+    -fx-fill: #33d9ff;
+}
+.key {
+    -fx-font-weight: bold;
+    -fx-fill: #1a66b7;
+}
+.number {
+    -fx-font-weight: bold;
+    -fx-fill: green;
+}
+.null{
+    -fx-font-weight: bold;
+    -fx-fill: blue;
+}
+.string-value{
+    -fx-font-weight: bold;
+    -fx-fill: #993300;
+}
+.structure {
+    -fx-font-weight: bold;
+    -fx-fill: gray;
+}
+.brace{
+    -fx-font-weight: bold;
+    -fx-fill: #e6994d;
+}
+.underlined {
+    -rtfx-background-color: #f0f0f0;
+    -rtfx-underline-color: red;
+    -rtfx-underline-dash-array: 2 2;
+    -rtfx-underline-width: 1;
+    -rtfx-underline-cap: butt;
+}
+.unknown{
+    -fx-fill: black;
+}
+.paragraph-box:has-caret {
+    -fx-background-color: #f2f9fc;
+}
+.code-area .paragraph-box .text.match-pair {
+    -rtfx-background-color: #00000033;
+}

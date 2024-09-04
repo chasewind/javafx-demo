@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 /**
  * 根据已有索引查询数据
  */
-public class DetailSearchBox extends VBox implements SelfDefineComponent{
+public class DetailSearchBox extends VBox implements SelfDefineComponent {
 
     private StackPane parentContainer;
 
@@ -36,21 +36,25 @@ public class DetailSearchBox extends VBox implements SelfDefineComponent{
     private Button actionBtn;
 
     private Stage stage;
-    private  SearchableComboBox<String> indexComboBox;
+    private SearchableComboBox<String> indexComboBox;
     private ComboBox<String> methodComboBox;
     private ComboBox<String> actionComboBox;
-    private TextArea queryDsl  ;
-    private TextArea resultDsl ;
+    private JsonTextBox queryDsl;
+    private JsonTextBox resultDsl;
     private ComboBox<QueryHistory> historyDslComboBox;
     private Button historyBtn;
     private Button backToOutViewBtn;
-    public DetailSearchBox(StackPane parentContainer,Stage stage){
+    private MessageEmitter messageEmitter;
+
+    public DetailSearchBox(StackPane parentContainer,MessageEmitter messageEmitter, Stage stage) {
         this.setPadding(new Insets(10));
         this.parentContainer = parentContainer;
+        this.messageEmitter = messageEmitter;
         this.stage = stage;
         initChildren();
         initEvent();
     }
+
     @Override
     public void initChildren() {
         //下拉框填充方法
@@ -64,25 +68,25 @@ public class DetailSearchBox extends VBox implements SelfDefineComponent{
         methodComboBox.setItems(methodList);
         methodComboBox.getSelectionModel().selectFirst();
 
-        indexComboBox = new SearchableComboBox <>();
+        indexComboBox = new SearchableComboBox<>();
 
         actionComboBox = new ComboBox<>();
 
-        ObservableList<String> actionList = FXCollections.observableArrayList("_search", "_count","_mappings");
+        ObservableList<String> actionList = FXCollections.observableArrayList("_search", "_count", "_mappings");
 
 
         actionComboBox.setItems(actionList);
         actionComboBox.getSelectionModel().selectFirst();
 
-         actionBtn = new Button("GO !");
+        actionBtn = new Button("GO !");
 
-         historyBtn = new Button("Save For History");
+        historyBtn = new Button("Save For History");
 
-       historyDslComboBox = new ComboBox<>();
+        historyDslComboBox = new ComboBox<>();
 
         ObservableList<QueryHistory> dslList = FXCollections.observableArrayList(QueryHistoryCache.getAll());
         historyDslComboBox.setItems(dslList);
-        Callback<ListView<QueryHistory>, ListCell<QueryHistory>> factory= new Callback<>() {
+        Callback<ListView<QueryHistory>, ListCell<QueryHistory>> factory = new Callback<>() {
             @Override
             public ListCell<QueryHistory> call(ListView<QueryHistory> queryHistoryListView) {
                 return new ListCell<>() {
@@ -101,36 +105,38 @@ public class DetailSearchBox extends VBox implements SelfDefineComponent{
         backToOutViewBtn = new Button("返回概览");
 
         querybox.getChildren().addAll(methodComboBox, indexComboBox, actionComboBox, actionBtn, historyBtn,
-                historyDslComboBox,backToOutViewBtn);
+                historyDslComboBox, backToOutViewBtn);
 
 
-          queryDsl = new TextArea();
-          resultDsl = new TextArea();
+        queryDsl = new JsonTextBox(messageEmitter);
+        resultDsl = new JsonTextBox(messageEmitter);
         HBox dslBox = new HBox(queryDsl, resultDsl);
         HBox.setHgrow(queryDsl, Priority.ALWAYS);
         HBox.setHgrow(resultDsl, Priority.ALWAYS);
         dslBox.setPadding(new Insets(10));
         dslBox.setSpacing(10);
         dslBox.setPrefHeight(480);
-        VBox.setVgrow(dslBox,Priority.ALWAYS);
+        VBox.setVgrow(dslBox, Priority.ALWAYS);
         getChildren().addAll(querybox, dslBox);
 
     }
 
     @Override
     public void initEvent() {
-        DefaultEventBus.getInstance().registerConsumer(EventType.INIT_CLUSTER_INDEX,event -> {
-            this.searchContext= (SearchContext) event.getEventData();
+        DefaultEventBus.getInstance().registerConsumer(EventType.INIT_CLUSTER_INDEX, event -> {
+            this.searchContext = (SearchContext) event.getEventData();
             List<IndexInfo> indexInfoList = searchContext.getIndexInfoList();
-            List<String> indexNameList = indexInfoList.stream().map(IndexInfo::getIndexName).collect(Collectors.toList());
+            List<String> indexNameList =
+                    indexInfoList.stream().map(IndexInfo::getIndexName).collect(Collectors.toList());
             indexComboBox.setItems(FXCollections.observableArrayList(indexNameList));
             indexComboBox.getSelectionModel().selectFirst();
         });
-        DefaultEventBus.getInstance().registerConsumer(EventType.QUERY_WITH_SPECIAL_INDEX,event -> {
-            IndexInfo indexInfo= (IndexInfo) event.getEventData();
-            if(searchContext!=null){
-                List<IndexInfo> indexInfoList =   searchContext.getIndexInfoList();
-                Optional<IndexInfo> first = indexInfoList.stream().filter(e -> e.getIndexName().equals(indexInfo.getIndexName())).findFirst();
+        DefaultEventBus.getInstance().registerConsumer(EventType.QUERY_WITH_SPECIAL_INDEX, event -> {
+            IndexInfo indexInfo = (IndexInfo) event.getEventData();
+            if (searchContext != null) {
+                List<IndexInfo> indexInfoList = searchContext.getIndexInfoList();
+                Optional<IndexInfo> first =
+                        indexInfoList.stream().filter(e -> e.getIndexName().equals(indexInfo.getIndexName())).findFirst();
                 first.ifPresent(info -> indexComboBox.getSelectionModel().select(info.getIndexName()));
 
             }
@@ -138,20 +144,21 @@ public class DetailSearchBox extends VBox implements SelfDefineComponent{
 
 
         actionBtn.setOnAction(actionEvent -> {
-            if(searchContext == null){
+            if (searchContext == null) {
                 return;
             }
             //构建完整查询动作
             String index = indexComboBox.getSelectionModel().getSelectedItem();
             String method = methodComboBox.getSelectionModel().getSelectedItem();
             String action = actionComboBox.getSelectionModel().getSelectedItem();
-            String requestJson = queryDsl.getText().trim();
+            String requestJson = queryDsl.getContent().trim();
             if (StringUtils.isEmpty(requestJson)) {
                 requestJson = "{}";
             }
-            LinkClusterInfo linkClusterInfo =searchContext.getLinkClusterInfo();
+            LinkClusterInfo linkClusterInfo = searchContext.getLinkClusterInfo();
             String authHead = linkClusterInfo.getAuthHead();
-            ResponseResult<String> dslResponse = RemoteCallApi.queryDsl(linkClusterInfo.getBaseUrl(), authHead, method, index,
+            ResponseResult<String> dslResponse = RemoteCallApi.queryDsl(linkClusterInfo.getBaseUrl(), authHead,
+                    method, index,
                     action,
                     requestJson);
             String unformattedJson = dslResponse.getData();
@@ -160,19 +167,18 @@ public class DetailSearchBox extends VBox implements SelfDefineComponent{
                     .setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE).setPrettyPrinting().create();
             Object json = gson.fromJson(unformattedJson, Object.class);
             String prettyJson = gson.toJson(json);
-            resultDsl.clear();
-            resultDsl.appendText(prettyJson);
+            resultDsl.setContent(prettyJson);
 
         });
         //历史查询语句传递
         historyDslComboBox.setOnAction(actionEvent -> {
             QueryHistory queryHistory = historyDslComboBox.getSelectionModel().getSelectedItem();
-            queryDsl.setText(queryHistory.getRequestJson());
+            queryDsl.setContent(queryHistory.getRequestJson());
         });
 
         historyBtn.setOnAction(actionEvent -> {
 
-            String requestJson = queryDsl.getText().trim();
+            String requestJson = queryDsl.getContent().trim();
             if (StringUtils.isEmpty(requestJson)) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("错误");
@@ -218,7 +224,7 @@ public class DetailSearchBox extends VBox implements SelfDefineComponent{
             });
         });
         backToOutViewBtn.setOnAction(actionEvent -> {
-            Event<LinkClusterInfo> event = new Event<>(EventType.BACK_TO_OVERVIEW,searchContext.getLinkClusterInfo());
+            Event<LinkClusterInfo> event = new Event<>(EventType.BACK_TO_OVERVIEW, searchContext.getLinkClusterInfo());
             DefaultEventBus.getInstance().sendEvent(event);
         });
     }
