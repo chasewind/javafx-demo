@@ -8,6 +8,9 @@ public enum EventType {
     /**根据指定的索引查数据*/
     QUERY_WITH_SPECIAL_INDEX,
     /**初始化集群对应的索引*/
-    INIT_CLUSTER_INDEX;
+    INIT_CLUSTER_INDEX,
+    /**回到概览页面*/
+    BACK_TO_OVERVIEW;
+    ;
 
 }

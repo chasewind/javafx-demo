@@ -1,5 +1,8 @@
 package com.example.javafxdemo;
 
+import com.example.javafxdemo.event.DefaultEventBus;
+import com.example.javafxdemo.event.Event;
+import com.example.javafxdemo.event.EventType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -95,7 +98,8 @@ public class RemoteCallApi {
             responseResult.setHttpStatus(response.statusCode());
             responseResult.setData(response.body());
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+            Event<String> event = new Event<>(EventType.CONNECT_FAIL_CLUSTER, e.getMessage());
+            DefaultEventBus.getInstance().sendEvent(event);
         }
         return responseResult;
 

@@ -3,6 +3,7 @@ package com.example.javafxdemo.components;
 
 import com.example.javafxdemo.*;
 import com.example.javafxdemo.event.DefaultEventBus;
+import com.example.javafxdemo.event.Event;
 import com.example.javafxdemo.event.EventType;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -42,6 +43,7 @@ public class DetailSearchBox extends VBox implements SelfDefineComponent{
     private TextArea resultDsl ;
     private ComboBox<QueryHistory> historyDslComboBox;
     private Button historyBtn;
+    private Button backToOutViewBtn;
     public DetailSearchBox(StackPane parentContainer,Stage stage){
         this.setPadding(new Insets(10));
         this.parentContainer = parentContainer;
@@ -96,10 +98,10 @@ public class DetailSearchBox extends VBox implements SelfDefineComponent{
         historyDslComboBox.setCellFactory(factory);
         historyDslComboBox.setButtonCell(factory.call(null));
 
-
+        backToOutViewBtn = new Button("返回概览");
 
         querybox.getChildren().addAll(methodComboBox, indexComboBox, actionComboBox, actionBtn, historyBtn,
-                historyDslComboBox);
+                historyDslComboBox,backToOutViewBtn);
 
 
           queryDsl = new TextArea();
@@ -203,6 +205,8 @@ public class DetailSearchBox extends VBox implements SelfDefineComponent{
                     queryHistory.setTemplateName(saveId);
                     queryHistory.setRequestJson(requestJson);
                     QueryHistoryCache.save(queryHistory);
+                    List<QueryHistory> items = QueryHistoryCache.getAll();
+                    historyDslComboBox.setItems(FXCollections.observableArrayList(items));
 
                 } else {
                     Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -212,6 +216,10 @@ public class DetailSearchBox extends VBox implements SelfDefineComponent{
                     alert.showAndWait();
                 }
             });
+        });
+        backToOutViewBtn.setOnAction(actionEvent -> {
+            Event<LinkClusterInfo> event = new Event<>(EventType.BACK_TO_OVERVIEW,searchContext.getLinkClusterInfo());
+            DefaultEventBus.getInstance().sendEvent(event);
         });
     }
 }

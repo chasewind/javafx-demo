@@ -11,6 +11,7 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
@@ -44,6 +45,17 @@ public class ElasticSearchClient extends Application {
             stackPane.getChildren().clear();
             stackPane.getChildren().add(detailSearchBox);
                });
+        DefaultEventBus.getInstance().registerConsumer(EventType.BACK_TO_OVERVIEW,event -> {
+            stackPane.getChildren().clear();
+            stackPane.getChildren().add(searchTableView);
+        });
+        DefaultEventBus.getInstance().registerConsumer(EventType.CONNECT_FAIL_CLUSTER,event -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("错误");
+            alert.setHeaderText("连接集群失败");
+            alert.setContentText("请确认网络以及用户名密码后重试");
+            alert.showAndWait();
+        });
         stackPane.getChildren().addAll(searchTableView);
         root.setCenter(stackPane);
         Scene scene = new Scene(root);
