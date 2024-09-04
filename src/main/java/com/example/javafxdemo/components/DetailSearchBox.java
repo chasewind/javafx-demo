@@ -5,16 +5,13 @@ import com.example.javafxdemo.*;
 import com.example.javafxdemo.event.DefaultEventBus;
 import com.example.javafxdemo.event.Event;
 import com.example.javafxdemo.event.EventType;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.ToNumberPolicy;
+import com.example.javafxdemo.json.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -30,7 +27,6 @@ import java.util.stream.Collectors;
  */
 public class DetailSearchBox extends VBox implements SelfDefineComponent {
 
-    private StackPane parentContainer;
 
     private SearchContext searchContext;
     private Button actionBtn;
@@ -45,10 +41,11 @@ public class DetailSearchBox extends VBox implements SelfDefineComponent {
     private Button historyBtn;
     private Button backToOutViewBtn;
     private MessageEmitter messageEmitter;
+    private final SerializerConfiguration SERIALIZER_CONFIGURATION = new SerializerConfiguration();
+    private final DeserializerConfiguration DESERIALIZER_CONFIGURATION = new DeserializerConfiguration();
 
-    public DetailSearchBox(StackPane parentContainer,MessageEmitter messageEmitter, Stage stage) {
+    public DetailSearchBox( MessageEmitter messageEmitter, Stage stage) {
         this.setPadding(new Insets(10));
-        this.parentContainer = parentContainer;
         this.messageEmitter = messageEmitter;
         this.stage = stage;
         initChildren();
@@ -163,11 +160,14 @@ public class DetailSearchBox extends VBox implements SelfDefineComponent {
                     requestJson);
             String unformattedJson = dslResponse.getData();
 
-            Gson gson = new GsonBuilder().setNumberToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE)
-                    .setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE).setPrettyPrinting().create();
-            Object json = gson.fromJson(unformattedJson, Object.class);
-            String prettyJson = gson.toJson(json);
-            resultDsl.setContent(prettyJson);
+            JsonElement jsonElement = null;
+            try {
+                jsonElement = JsonOperator.parse(unformattedJson, DESERIALIZER_CONFIGURATION);
+                String prettyJson = jsonElement.toPrettyString(SERIALIZER_CONFIGURATION);
+                resultDsl.setContent(prettyJson);
+            } catch (JsonParseException e) {
+                throw new RuntimeException(e);
+            }
 
         });
         //历史查询语句传递

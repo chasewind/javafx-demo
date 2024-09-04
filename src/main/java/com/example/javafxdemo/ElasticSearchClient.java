@@ -46,8 +46,8 @@ public class ElasticSearchClient extends Application {
         MessageEmitter messageEmitter = new MessageEmitter(messageLabel);
         root.setBottom(messageLabel);
         //默认第一个展示
-        SearchTableView searchTableView = new SearchTableView(stackPane);
-        DetailSearchBox detailSearchBox = new DetailSearchBox(stackPane,messageEmitter,primaryStage);
+        SearchTableView searchTableView = new SearchTableView( );
+        DetailSearchBox detailSearchBox = new DetailSearchBox(messageEmitter,primaryStage);
         DefaultEventBus.getInstance().registerConsumer(EventType.QUERY_WITH_SPECIAL_INDEX, event -> {
             stackPane.getChildren().clear();
             stackPane.getChildren().add(detailSearchBox);

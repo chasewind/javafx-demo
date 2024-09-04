@@ -25,11 +25,9 @@ import java.util.Map;
 public class SearchTableView extends VBox implements SelfDefineComponent{
 
     private TableView<IndexInfo> tableView;
-    private StackPane parentContainer;
 
-    public SearchTableView(StackPane parentContainer) {
+    public SearchTableView( ) {
         this.setPadding(new Insets(10));
-        this.parentContainer = parentContainer;
         initChildren();
         initEvent();
     }
