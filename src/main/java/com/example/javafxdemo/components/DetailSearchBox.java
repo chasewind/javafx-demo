@@ -39,6 +39,7 @@ public class DetailSearchBox extends VBox implements SelfDefineComponent {
     private JsonTextBox resultDsl;
     private ComboBox<QueryHistory> historyDslComboBox;
     private Button historyBtn;
+    private Button loadQueryTemplateBtn;
     private Button backToOutViewBtn;
     private MessageEmitter messageEmitter;
     private final SerializerConfiguration SERIALIZER_CONFIGURATION = new SerializerConfiguration();
@@ -98,11 +99,11 @@ public class DetailSearchBox extends VBox implements SelfDefineComponent {
         };
         historyDslComboBox.setCellFactory(factory);
         historyDslComboBox.setButtonCell(factory.call(null));
-
+        loadQueryTemplateBtn = new Button("加载基础查询模板");
         backToOutViewBtn = new Button("返回概览");
 
         querybox.getChildren().addAll(methodComboBox, indexComboBox, actionComboBox, actionBtn, historyBtn,
-                historyDslComboBox, backToOutViewBtn);
+                historyDslComboBox, loadQueryTemplateBtn,backToOutViewBtn);
 
 
         queryDsl = new JsonTextBox(messageEmitter);
@@ -222,6 +223,9 @@ public class DetailSearchBox extends VBox implements SelfDefineComponent {
                     alert.showAndWait();
                 }
             });
+        });
+        loadQueryTemplateBtn.setOnAction(actionEvent -> {
+            queryDsl.setContent(GlobalConstants.DEFAULT_TEMPLATE);
         });
         backToOutViewBtn.setOnAction(actionEvent -> {
             Event<LinkClusterInfo> event = new Event<>(EventType.BACK_TO_OVERVIEW, searchContext.getLinkClusterInfo());
