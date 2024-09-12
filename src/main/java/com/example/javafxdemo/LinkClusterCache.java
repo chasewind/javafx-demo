@@ -18,7 +18,7 @@ public class LinkClusterCache {
     private static final Map<String, LinkClusterInfo> clusterInfoMap = new HashMap<>();
 
     public static void init() {
-        String tempDir = System.getProperty("java.io.tmpdir");
+        String tempDir = System.getProperty("user.home");
         File linkClusterFile = new File(tempDir, "link_cluster.bak");
         try {
             if (!linkClusterFile.exists()) {
@@ -62,7 +62,7 @@ public class LinkClusterCache {
     public static void addToCache(LinkClusterInfo linkClusterInfo) {
         clusterInfoMap.put(linkClusterInfo.getBaseUrl(), linkClusterInfo);
         //写入文件系统
-        String tempDir = System.getProperty("java.io.tmpdir");
+        String tempDir = System.getProperty("user.home");
         File linkClusterFile = new File(tempDir, "link_cluster.bak");
         try {
             List<LinkClusterInfo> clusterInfoList = getAll();

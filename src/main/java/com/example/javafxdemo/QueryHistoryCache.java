@@ -22,7 +22,7 @@ public class QueryHistoryCache {
     private static int MAX_POS = 0;
 
     public static void init() {
-        String tempDir = System.getProperty("java.io.tmpdir");
+        String tempDir = System.getProperty("user.home");
         File queryHistoryFile = new File(tempDir, "es_query_history.bak");
         try {
             if (!queryHistoryFile.exists()) {
@@ -70,7 +70,7 @@ public class QueryHistoryCache {
         //需要设置一个全局id
         queryHistoryMap.put(queryHistory.getId(), queryHistory);
         //写入文件系统
-        String tempDir = System.getProperty("java.io.tmpdir");
+        String tempDir = System.getProperty("user.home");
         File queryHistoryFile = new File(tempDir, "es_query_history.bak");
         try {
             List<QueryHistory> queryHistoryList = getAll();
