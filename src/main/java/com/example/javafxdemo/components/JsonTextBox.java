@@ -40,8 +40,15 @@ public class JsonTextBox extends BorderPane {
             this.searchAction.search(text, false, searchOverviewFetcher);
         });
         this.setOnKeyPressed(keyEvent -> {
+            //window支持
             if(keyEvent.isControlDown() && keyEvent.getCode() == KeyCode.F){
                 this.searchBegin();
+                keyEvent.consume(); // 消耗事件，防止进一步处理
+            }
+            //mac支持
+            if(keyEvent.isMetaDown() && keyEvent.getCode()== KeyCode.F){
+                this.searchBegin();
+                keyEvent.consume(); // 消耗事件，防止进一步处理
             }
         });
         textSearchBox.onClose(this.codeArea::requestFocus);
