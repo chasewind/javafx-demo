@@ -17,10 +17,7 @@ import javafx.scene.layout.VBox;
 
 import java.net.URI;
 import java.net.http.HttpRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class SearchTableView extends VBox implements SelfDefineComponent{
 
@@ -84,6 +81,7 @@ public class SearchTableView extends VBox implements SelfDefineComponent{
             }
             indexInfoList.add(indexInfo);
         });
+        Collections.sort(indexInfoList, (o1, o2) -> o1.getIndexName().compareTo(o2.getIndexName()));
         ObservableList<IndexInfo> tableData = FXCollections.observableArrayList(indexInfoList);
         tableView.setItems(tableData);
         //发送事件初始化
