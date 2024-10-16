@@ -8,8 +8,8 @@ class PrettyJsonWriter implements IJsonWriter, IJsonValueWriter{
     private final static String SPACE = " ";
 
     private final static String NEXT_LINE = "\n";
-
-    private final static String TAB_SPACE = "    ";
+    //tab adjust to one space
+    private final static String TAB_SPACE = " ";
 
     private int tab = 0;
 
