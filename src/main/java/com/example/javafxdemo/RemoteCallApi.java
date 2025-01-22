@@ -24,7 +24,11 @@ public class RemoteCallApi {
             basicUrl = basicUrl+"/";
         }
         if(StringUtils.isNotEmpty(action) ){
-            builder.uri(URI.create(basicUrl+indexName+"/"+action));
+            if("_delete_by_query".equals(action)){
+                builder.uri(URI.create(basicUrl+indexName+"/"+action+"?conflicts=proceed&wait_for_completion=false"));
+            }else{
+                builder.uri(URI.create(basicUrl+indexName+"/"+action));
+            }
         }else{
             builder.uri(URI.create(basicUrl+indexName));
         }
@@ -46,6 +50,8 @@ public class RemoteCallApi {
                 log.info("ignore HEAD Request");
                 break;
             case "DELETE":
+                builder.header("Content-Type", "application/json");
+                builder.POST(HttpRequest.BodyPublishers.ofString(requestJson));
                 log.info("ignore DELETE Request");
                 break;
             default:
