@@ -37,22 +37,16 @@ public class RemoteCallApi {
             builder.header("Authorization", authHead);
         }
         //observableArrayList("GET", "POST", "PUT", "HEAD", "DELETE");
+        builder.header("Content-Type", "application/json");
         switch (method){
-            case "POST":
-                builder.header("Content-Type", "application/json");
+            case "POST", "DELETE":
                 builder.POST(HttpRequest.BodyPublishers.ofString(requestJson));
                 break;
             case "PUT":
-                builder.header("Content-Type", "application/json");
                 builder.PUT(HttpRequest.BodyPublishers.ofString(requestJson));
                 break;
             case "HEAD":
                 log.info("ignore HEAD Request");
-                break;
-            case "DELETE":
-                builder.header("Content-Type", "application/json");
-                builder.POST(HttpRequest.BodyPublishers.ofString(requestJson));
-                log.info("ignore DELETE Request");
                 break;
             default:
                 builder.GET();
