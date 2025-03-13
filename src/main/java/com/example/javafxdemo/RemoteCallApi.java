@@ -36,8 +36,17 @@ public class RemoteCallApi {
         if(StringUtils.isNotEmpty(authHead)){
             builder.header("Authorization", authHead);
         }
-        //observableArrayList("GET", "POST", "PUT", "HEAD", "DELETE");
-        builder.header("Content-Type", "application/json");
+
+        if(action.contains("_msearch")){
+            builder.header("Content-Type", "application/x-ndjson");
+            if(!requestJson.endsWith("\n")){
+                //追加\n
+                requestJson += "\n";
+            }
+        }else{
+            builder.header("Content-Type", "application/json");
+        }
+
         switch (method){
             case "POST", "DELETE":
                 builder.POST(HttpRequest.BodyPublishers.ofString(requestJson));
