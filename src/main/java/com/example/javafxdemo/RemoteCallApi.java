@@ -48,8 +48,12 @@ public class RemoteCallApi {
         }
 
         switch (method){
-            case "POST", "DELETE":
+            case "POST":
+
                 builder.POST(HttpRequest.BodyPublishers.ofString(requestJson));
+                break;
+            case "DELETE":
+                builder.DELETE();
                 break;
             case "PUT":
                 builder.PUT(HttpRequest.BodyPublishers.ofString(requestJson));

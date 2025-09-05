@@ -71,7 +71,7 @@ public class DetailSearchBox extends VBox implements SelfDefineComponent {
         actionComboBox = new ComboBox<>();
 
         //"_msearch?track_total_hits=true"
-        ObservableList<String> actionList = FXCollections.observableArrayList("_search", "_count", "_mappings","_analyze","_delete_by_query","_settings","_update_by_query","_search?explain=true","_msearch");
+        ObservableList<String> actionList = FXCollections.observableArrayList("","_search", "_count", "_mappings","_analyze","_delete_by_query","_settings","_update_by_query","_search?explain=true","_msearch");
 
 
         actionComboBox.setItems(actionList);
